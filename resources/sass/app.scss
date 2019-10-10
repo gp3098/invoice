@@ -1,8 +1,46 @@
 // Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+// @import url('https://fonts.googleapis.com/css?family=Nunito');
 
 // Variables
 @import 'variables';
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+.navbar{
+	margin-top:15px;
+}
+
+.panel-heading{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.filter{
+	display:flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+	&-column{
+		flex:4;
+		padding-right:15px; 
+	}
+	&-operator{
+		flex:4;
+		padding-right:15px;
+	}
+	&-input{
+		flex:6;
+		padding-right: 15px;
+	}
+	&-btn{
+		flex:1;
+	}
+}
+
+.pagination-footer{
+	display:flex;
+	justify-content: space-between;
+	align-items: center;
+}

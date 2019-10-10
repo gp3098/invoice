@@ -27,7 +27,7 @@ trait FilterPaginateOrder
             'direction' => 'required|in:asc,desc',
             'per_page' => 'required|integer|min:1',
             'search_operator' => 'required|in:' . implode(',', array_keys($this->operators)),
-            'search_cloumn' => 'required|in:' . implode(',', $this->filter),
+            'search_column' => 'required|in:' . implode(',', $this->filter),
             'search_query_1' => 'max:255',
             'search_query_2' => 'max:255',
         ]);
@@ -45,7 +45,6 @@ trait FilterPaginateOrder
                 if ($request->has('search_query_1')) {
                     // determine the type of saerch_column
                     // check if its related model, eg:customer.id
-
                     if ($this->isRelatedColumn($request)) {
                         list($relation, $relatedColumn) = explode('.', $request->search_cloumn);
                         return $query->whereHas($relation, function ($query) use ($relatedColumn, $request) {
@@ -60,7 +59,7 @@ trait FilterPaginateOrder
                     } else {
                         // regular column
                         return $this->buildQuery(
-                            $request->search_cloumn,
+                            $request->search_column,
                             $request->search_operator,
                             $request,
                             $query
