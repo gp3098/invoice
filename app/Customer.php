@@ -25,7 +25,7 @@ class Customer extends Model
     }
     public function invoices()
     {
-        // return $this->hasMany(Invoice::class);
-        return $this->hasMany('App\Invoice'); //不知道两种 写法有 什么 区别
+        return $this->hasMany(Invoice::class);
+        // return $this->hasMany('App\Invoice'); //两种写法好像 没有区别
     }
 }

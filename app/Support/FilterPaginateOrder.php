@@ -6,6 +6,7 @@ use Validator;
 
 trait FilterPaginateOrder
 {
+
     protected $operators = [
         'equal_to' => '=',
         'not_equal' => '<>',
@@ -21,7 +22,6 @@ trait FilterPaginateOrder
     public function scopeFilterPaginateOrder($query)
     {
         $request = request();
-
         $v = Validator::make($request->all(), [
             'column' => 'required|in:' . implode(',', $this->filter),
             'direction' => 'required|in:asc,desc',
@@ -43,8 +43,7 @@ trait FilterPaginateOrder
                 //check if   search query is empty
 
                 if ($request->has('search_query_1')) {
-                    // determine the type of saerch_column
-                    // check if its related model, eg:customer.id
+
                     if ($this->isRelatedColumn($request)) {
                         list($relation, $relatedColumn) = explode('.', $request->search_cloumn);
                         return $query->whereHas($relation, function ($query) use ($relatedColumn, $request) {
@@ -83,7 +82,11 @@ trait FilterPaginateOrder
             case 'greater_than':
             case 'less_than_or_equal_to':
             case 'greater_than_or_equal_to':
-                $query->where($column, $this->operators[$operator], $request->search_query_1);
+                if (!$request->search_query_1) {
+
+                } else {
+                    $query->where($column, $this->operators[$operator], $request->search_query_1);
+                }
                 break;
             case 'in':
                 $query->whereIn($column, explode(',', $request->search_query_1));
@@ -101,10 +104,10 @@ trait FilterPaginateOrder
                 ]);
                 break;
             default:
-                throw new Exception('Invalid Search Operator', 1);
+                throw new Exception('参数错误', 1);
 
                 break;
         }
-        return $query;
+        return $query->get();
     }
 }
