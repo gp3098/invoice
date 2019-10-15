@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Customer;
 use Illuminate\Http\Request;
+use App\Customer;
+
 class CustomerController extends Controller
 {
     public function index()
     {
         return response()
             ->json([
-                'model' => Customer::filterPaginateOrder(),
+                'model' => Customer::filterPaginateOrder()
             ]);
     }
+
     public function create()
     {
         return response()
             ->json([
                 'form' => Customer::initialize(),
-                'option' => [],
+                'option' => []
             ]);
     }
 
@@ -29,14 +31,14 @@ class CustomerController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'phone' => 'required',
-            'address' => 'required',
+            'address' => 'required'
         ]);
 
         $customer = Customer::create($request->all());
 
         return response()
             ->json([
-                'saved' => true,
+                'saved' => true
             ]);
     }
 
@@ -46,7 +48,7 @@ class CustomerController extends Controller
 
         return response()
             ->json([
-                'model' => $customer,
+                'model' => $customer
             ]);
     }
 
@@ -57,38 +59,40 @@ class CustomerController extends Controller
         return response()
             ->json([
                 'form' => $customer,
-                'opttion' => [],
+                'option' => []
             ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         $this->validate($request, [
             'company' => 'required',
             'name' => 'required',
             'email' => 'required|email',
             'phone' => 'required',
-            'address' => 'required',
+            'address' => 'required'
         ]);
+
         $customer = Customer::findOrFail($id);
         $customer->update($request->all());
 
         return response()
             ->json([
-                'save' => true,
+                'saved' => true
             ]);
     }
-    public function destory($id)
+
+    public function destroy($id)
     {
         $customer = Customer::findOrFail($id);
 
-        //TODO: delete customer's invoices first
+        // TODO: delete customer's invoices first
 
         $customer->delete();
 
         return response()
             ->json([
-                'deleted' => true,
+                'deleted' => true
             ]);
     }
 }

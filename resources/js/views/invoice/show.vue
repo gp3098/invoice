@@ -1,33 +1,55 @@
 <template>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <span class="panel-title">{{model.company}} / {{model.name}}</span>
+            <span class="panel-title">{{model.title}}</span>
             <div>
-                <router-link :to="'/customer/' + model.id + '/edit'" class="btn btn-primary btn-sm">Edit</router-link>
+                <router-link :to="'/invoice/' + model.id + '/edit'" class="btn btn-primary btn-sm">Edit</router-link>
                 <button class="btn btn-danger btn-sm" @click="remove">Delete</button>
             </div>
         </div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-sm-4">
-                    <label>Company</label>
-                    <p>{{model.company}}</p>
-                    <label>Name</label>
-                    <p>{{model.name}}</p>
+                    <label>Customer</label>
+                    <p>{{model.customer.company}} / {{model.customer.name}}</p>
+                    <label>Sub Total</label>
+                    <p>{{model.sub_total}}</p>
+                    <label>Discount</label>
+                    <p>{{model.discount}}</p>
+                    <label>Total</label>
+                    <p>{{model.total}}</p>
                 </div>
                 <div class="col-sm-4">
-                    <label>Email Address</label>
+                    <label>Title</label>
                     <p>{{model.email}}</p>
-                    <label>Phone Number</label>
-                    <p>{{model.phone}}</p>
+                    <label>Date</label>
+                    <p>{{model.date}}</p>
+                    <label>Due Date</label>
+                    <p>{{model.due_date}}</p>
                 </div>
                 <div class="col-sm-4">
                     <label>Created At</label>
                     <p>{{model.created_at}}</p>
-                    <label>Address</label>
-                    <pre>{{model.address}}</pre>
                 </div>
             </div>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <thead>
+                    <tr v-for="item in model.items">
+                        <td>{{item.description}}</td>
+                        <td>{{item.qty}}</td>
+                        <td>{{item.unit_price}}</td>
+                        <td>{{item.qty * item.unit_price}}</td>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
 </template>
@@ -35,12 +57,15 @@
     import Vue from 'vue'
     import axios from 'axios'
     export default {
-        name: 'CategoryShow',
+        name: 'InvoiceShow',
         data() {
             return {
-                model: {},
-                resource: 'customer',
-                redirect: '/'
+                model: {
+                    customer: {},
+                    items: []
+                },
+                resource: 'invoice',
+                redirect: '/invoice'
             }
         },
         beforeMount() {

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Customer;
+use Illuminate\Http\Request;
 use App\Invoice;
 use App\InvoiceItem;
-use Illuminate\Http\Request;
+use App\Customer;
 
 class InvoiceController extends Controller
 {
@@ -13,7 +13,7 @@ class InvoiceController extends Controller
     {
         return response()
             ->json([
-                'model' => Invoice::with('customer')->filterPaginateOrder(),
+                'model' => Invoice::with('customer')->filterPaginateOrder()
             ]);
     }
 
@@ -23,8 +23,8 @@ class InvoiceController extends Controller
             ->json([
                 'form' => Invoice::initialize(),
                 'option' => [
-                    'customers' => Customer::orderBy('name')->get(),
-                ],
+                    'customers' => Customer::orderBy('name')->get()
+                ]
             ]);
     }
 
@@ -39,14 +39,14 @@ class InvoiceController extends Controller
             'items' => 'required|array|min:1',
             'items.*.description' => 'required|max:255',
             'items.*.qty' => 'required|integer|min:1',
-            'items.*.unit_price' => 'required|numric|min:0',
+            'items.*.unit_price' => 'required|numeric|min:0'
         ]);
 
         $data = $request->except('items');
         $data['sub_total'] = 0;
         $items = [];
 
-        foreach ($request->items as $item) {
+        foreach($request->items as $item) {
             $data['sub_total'] += $item['unit_price'] * $item['qty'];
             $items[] = new InvoiceItem($item);
         }
@@ -60,7 +60,7 @@ class InvoiceController extends Controller
 
         return response()
             ->json([
-                'saved' => true,
+                'saved' => true
             ]);
     }
 
@@ -70,7 +70,7 @@ class InvoiceController extends Controller
 
         return response()
             ->json([
-                'model' => $invoice,
+                'model' => $invoice
             ]);
     }
 
@@ -81,7 +81,9 @@ class InvoiceController extends Controller
         return response()
             ->json([
                 'form' => $invoice,
-                'option' => Customer::orderBy('name')->get(),
+                'option' => [
+                    'customers' => Customer::orderBy('name')->get()
+                ]
             ]);
     }
 
@@ -96,7 +98,7 @@ class InvoiceController extends Controller
             'items' => 'required|array|min:1',
             'items.*.description' => 'required|max:255',
             'items.*.qty' => 'required|integer|min:1',
-            'items.*.unit_price' => 'required|numric|min:0',
+            'items.*.unit_price' => 'required|numeric|min:0'
         ]);
 
         $invoice = Invoice::findOrFail($id);
@@ -106,13 +108,14 @@ class InvoiceController extends Controller
         $items = [];
         $itemIds = [];
 
-        foreach ($request->items as $item) {
+        foreach($request->items as $item) {
             $data['sub_total'] += $item['unit_price'] * $item['qty'];
-            if (isset($item['id'])) {
-                //update the item
+            if(isset($item['id'])) {
+                // update the item
                 InvoiceItem::whereId($item['id'])
-                    ->whereInVoiceId($invoice->id)
+                    ->whereInvoiceId($invoice->id)
                     ->update($item);
+                $itemIds[] = $item['id'];
             } else {
                 $items[] = new InvoiceItem($item);
             }
@@ -124,35 +127,35 @@ class InvoiceController extends Controller
 
         // delete removed items
 
-        if (count($itemIds)) {
-        	InvoiceItem:;whereInVoiceId($invoice->id)
-        	->whereNotIn('id',$itemIds)
-        	->delete();
+        if(count($itemIds)) {
+            InvoiceItem::whereInvoiceId($invoice->id)
+                ->whereNotIn('id', $itemIds)
+                ->delete();
         }
 
-        if (count($items)) {
-        	$invoice->items()
-        	->saveMany($items);
+        if(count($items)) {
+            $invoice->items()
+                ->saveMany($items);
         }
 
         return response()
             ->json([
-                'save' => true,
+                'saved' => true
             ]);
     }
 
-    public function destory($id)
+    public function destroy($id)
     {
         $invoice = Invoice::findOrFail($id);
 
-        InvoiceItem::whereInVoiceId($invoice->id)
+        InvoiceItem::whereInvoiceId($invoice->id)
             ->delete();
 
         $invoice->delete();
-        
+
         return response()
             ->json([
-                'deleted' => true,
+                'deleted' => true
             ]);
     }
 }
